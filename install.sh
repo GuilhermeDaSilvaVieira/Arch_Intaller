@@ -21,8 +21,10 @@ is_uefi() {
 }
 
 partition(){
-	fdisk /dev/sda < fdisk_cmds  # /boot/EFI [SWAP] /
-	fdisk /dev/nvme0n1 < home_fdisk_cmds # /home
+	# /boot/EFI [SWAP] /
+	fdisk /dev/sda < fdisk_cmds  
+	# /home
+	fdisk /dev/nvme0n1 < home_fdisk_cmds 
 }
 
 format(){
