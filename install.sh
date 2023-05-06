@@ -103,7 +103,7 @@ create_user(){
 	for user in work fun;
 	do 
 		arch-chroot /mnt useradd -m -G wheel,audio,video,optical,storage,libvirt -s /bin/fish $user
-		arch-chroot /mnt passwd echo "$user:1234" | chpasswd
+		echo $user:1234 >> passwords.txt
 	done
 }
 
@@ -133,9 +133,13 @@ echo 'blacklist nouveau' >> /mnt/etc/modprobe.d/blacklist.conf
 arch-chroot /mnt chsh -s /bin/fish
 grub
 systems
-# Root password
-arch-chroot /mnt echo "root:1234" | chpasswd
 create_user
+# Root password
+echo root:1234 >> passwords.txt
+# Copy passwords to new system
+cp -v passwords.txt /mnt
+# User Passowrds
+arch-chroot /mnt chpasswd < passwords.txt
 # Ensure blacklist works
 arch-chroot /mnt mkinitcpio -P
 # Save any logs in home
