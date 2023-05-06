@@ -52,12 +52,12 @@ mount_disk(){
 }
 
 time_and_locale(){
-  # Links to your timezone
-  ln -sf /mnt/usr/share/zoneinfo/America/Sao_Paulo /mnt/etc/localtime
-  
+	# Links to your timezone
+	ln -sf /mnt/usr/share/zoneinfo/America/Sao_Paulo /mnt/etc/localtime
+
   # generate /etc/adjtime
   arch-chroot /mnt hwclock --systohc
-  
+
   # Set locale to br
   echo 'pt_BR.UTF-8 UTF-8' >> /mnt/etc/locale.gen
   arch-chroot /mnt locale-gen
@@ -65,11 +65,11 @@ time_and_locale(){
 }
 
 packages(){
-  # Pacman config
-  sed -i 's/#Color/Color/' /mnt/etc/pacman.conf
-  sed -i 's/#ParallelDownloads/ParallelDownloads/' /mnt/etc/pacman.conf
-  sed -i "/\[multilib\]/,/Include/"'s/^#//' /mnt/etc/pacman.conf
-  
+	# Pacman config
+	sed -i 's/#Color/Color/' /mnt/etc/pacman.conf
+	sed -i 's/#ParallelDownloads/ParallelDownloads/' /mnt/etc/pacman.conf
+	sed -i "/\[multilib\]/,/Include/"'s/^#//' /mnt/etc/pacman.conf
+
   # Install all needed packages
   arch-chroot /mnt pacman -Sy --noconfirm --needed - < packages.txt
 }
@@ -79,13 +79,13 @@ grub(){
 	sed -i 's/GRUB_TIMEOUT=5/GRUB_TIMEOUT=0/' /mnt/etc/default/grub
 	# Enable os-prober
 	sed -i 's/\#GRUB_DISABLE_OS_PROBER/GRUB_DISABLE_OS_PROBER/' /mnt/etc/default/grub
-	
+
 	# Mount boot/EFI partition
 	arch-chroot /mnt mount --mkdir /dev/sda1 /boot/EFI
-	
+
 	# Print partition table
 	arch-chroot /mnt lsblk -f
-	
+
 	# Install grub with uefi
 	arch-chroot /mnt grub-install --target=x86_64-efi --bootloader-id=grub_uefi --recheck
 	arch-chroot /mnt grub-mkconfig -o /boot/grub/grub.cfg
@@ -105,6 +105,44 @@ create_user(){
 		arch-chroot /mnt useradd -m -G wheel,audio,video,optical,storage,libvirt -s /bin/fish $user
 		echo $user:1234 >> passwords.txt
 	done
+}
+
+aur(){
+	# Install Paru
+	arch-chroot /mnt sh -c '
+	su work;
+	cd /home/work/;
+	rustup default stable;
+	git clone https://aur.archlinux.org/paru-bin.git;
+	cd paru-bin;
+	makepkg -si;
+	rm paru-bin -rf;
+	'
+
+	# Paru config
+	sed -i 's/\#BottomUp/BottomUp/' /mnt/etc/paru.conf
+	sed -i 's/\#RemoveMake/RemoveMake/' /mnt/etc/paru.conf
+	sed -i 's/\#CleanAfter/CleanAfter/' /mnt/etc/paru.conf
+	sed -i 's/\#\[bin\]/\[bin\]/' /mnt/etc/paru.conf
+	sed -i 's/\#FileManager = vifm/FileManager = lf/' /mnt/etc/paru.conf
+	sed -i 's/\#Sudo = doas/Sudo = \/bin\/doas/' /mnt/etc/paru.conf
+	
+	# Install aur packages
+	cp -v aur_packages.txt /mnt/home/work/
+	arch-chroot /mnt sh -c '
+	su work;
+	cd /home/work/;
+	paru --noconfirm --needed -S - < aur_packages.txt;
+	'
+}
+
+x11_keymap(){
+	# Change keyboard to br
+	arch-chroot /mnt sh -c '
+	su work;
+	cd /home/work/;
+	localectl set-x11-keymap br;
+	'
 }
 
 is_uefi
@@ -144,3 +182,5 @@ arch-chroot /mnt chpasswd < passwords.txt
 arch-chroot /mnt mkinitcpio -P
 # Save any logs in home
 cp -v *.log /mnt/home/work/
+aur
+x11_keymap
