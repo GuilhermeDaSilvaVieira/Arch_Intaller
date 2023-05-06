@@ -1,0 +1,12 @@
+awesome-git
+librewolf-bin
+ttf-ms-fonts
+tradingview
+fastfetch
+jmtpfs
+epson-inkjet-printer-escpr
+mangal-bin
+xpadneo-dkms-git
+cava
+mangohud
+ani-cli-git
