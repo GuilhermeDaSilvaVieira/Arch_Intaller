@@ -131,10 +131,7 @@ aur(){
 
     # Install aur packages
     cp -v aur_packages.txt /mnt/home/work/
-    arch-chroot -u work /mnt sh -c '
-    cd /home/work;
-    paru --noconfirm --needed -S - < aur_packages.txt;
-    '
+    arch-chroot -u work /mnt paru --noconfirm --needed -S - < aur_packages.txt
 }
 
 x11_keymap(){
