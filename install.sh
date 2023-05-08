@@ -104,6 +104,8 @@ create_user(){
     do
         arch-chroot /mnt useradd -m -G wheel,audio,video,optical,storage,libvirt -s /bin/fish $user
         echo $user:1234 >> passwords.txt
+        mkdir /mnt/home/work/.cache/ /mnt/home/work/.config/
+        chown $user:$user /mnt/home/work/.cache/ /mnt/home/work/.config/
     done
 }
 
