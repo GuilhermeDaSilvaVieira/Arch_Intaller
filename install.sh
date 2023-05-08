@@ -109,7 +109,7 @@ create_user(){
 
 aur(){
     # Install Paru
-    arch-chroot /mnt -u work sh -c '
+    arch-chroot -u work /mnt sh -c '
     cd /home/work;
     rustup default stable;
     git clone https://aur.archlinux.org/paru-bin.git;
@@ -129,7 +129,7 @@ aur(){
 
     # Install aur packages
     cp -v aur_packages.txt /mnt/home/work/
-    arch-chroot /mnt -u work sh -c '
+    arch-chroot -u work /mnt sh -c '
     cd /home/work;
     paru --noconfirm --needed -S - < aur_packages.txt;
     '
@@ -137,7 +137,7 @@ aur(){
 
 x11_keymap(){
     # Change keyboard to br
-    arch-chroot /mnt -u work sh -c '
+    arch-chroot -u work /mnt sh -c '
     cd /home/work;
     localectl set-x11-keymap br;
     '
