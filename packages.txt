@@ -40,11 +40,9 @@ gnu-free-fonts
 noto-fonts
 ttf-dejavu
 ttf-droid
-ttf-firacode-nerd
 fd
 unzip
 ttf-lato
-ttf-nerd-fonts-symbols-common
 ttf-liberation
 ueberzug
 renameutils
