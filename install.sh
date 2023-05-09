@@ -8,6 +8,8 @@ BLUE='\033[1;36m'
 RED='\033[0;31m'
 NO_COLOR='\033[0m'
 
+CHROOT="arch-chroot /mnt"
+
 # Cleanup from previous runs.
 cleanup(){
     swapoff /dev/sda2
@@ -62,11 +64,11 @@ time_and_locale(){
     ln -sf /mnt/usr/share/zoneinfo/America/Sao_Paulo /mnt/etc/localtime
 
     # generate /etc/adjtime
-    arch-chroot /mnt hwclock --systohc
+    $CHROOT hwclock --systohc
 
     # Set locale to br
     echo 'pt_BR.UTF-8 UTF-8' >> /mnt/etc/locale.gen
-    arch-chroot /mnt locale-gen
+    $CHROOT locale-gen
     echo 'LANG=pt_BR.UTF-8' >> /mnt/etc/locale.conf
 }
 
@@ -77,7 +79,7 @@ packages(){
     sed -i "/\[multilib\]/,/Include/"'s/^#//' /mnt/etc/pacman.conf
 
     # Install all needed packages
-    arch-chroot /mnt pacman -Sy --noconfirm --needed - < packages.txt
+    $CHROOT pacman -Sy --noconfirm --needed - < packages.txt
 }
 
 grub(){
@@ -87,44 +89,42 @@ grub(){
     sed -i 's/\#GRUB_DISABLE_OS_PROBER/GRUB_DISABLE_OS_PROBER/' /mnt/etc/default/grub
 
     # Mount boot/EFI partition
-    arch-chroot /mnt mount --mkdir /dev/sda1 /boot/EFI
+    $CHROOT mount --mkdir /dev/sda1 /boot/EFI
 
     # Print partition table
-    arch-chroot /mnt lsblk -f
+    $CHROOT lsblk -f
 
     # Install grub with uefi
-    arch-chroot /mnt grub-install --target=x86_64-efi --bootloader-id=grub_uefi --recheck
-    arch-chroot /mnt grub-mkconfig -o /boot/grub/grub.cfg
+    $CHROOT grub-install --target=x86_64-efi --bootloader-id=grub_uefi --recheck
+    $CHROOT grub-mkconfig -o /boot/grub/grub.cfg
 }
 
 systems(){
     # Enable internet, VM, Printing, Bluetooth
     for system in NetworkManager libvirtd cups bluetooth;
     do
-        arch-chroot /mnt systemctl enable $system
+        $CHROOT systemctl enable $system
     done
 }
 
 create_user(){
     for user in work fun;
     do
-        arch-chroot /mnt useradd -m -G wheel,audio,video,optical,storage,libvirt -s /bin/fish $user
+        $CHROOT useradd -m -G wheel,audio,video,optical,storage,libvirt -s /bin/fish $user
         echo $user:1234 >> passwords.txt
         mkdir /mnt/home/$user/.cache/ /mnt/home/$user/.config/
-        arch-chroot /mnt chown $user:$user /home/$user/.cache/ /home/$user/.config/
+        $CHROOT chown $user:$user /home/$user/.cache/ /home/$user/.config/
     done
 }
 
 aur(){
     # Install Paru
-    arch-chroot -u work /mnt sh -c '
-    cd /home/work;
-    git clone https://aur.archlinux.org/paru-bin.git;
-    cd paru-bin;
-    makepkg -si;
-    cd ..;
-    rm paru-bin -rf;
-    '
+    echo "cd &&
+        git clone https://aur.archlinux.org/paru-bin.git &&
+        cd paru-bin &&
+        makepkg -si --noconfirm &&
+        cd &&
+    rm -rf paru-bin" | $CHROOT su work
 
     # Paru config
     sed -i 's/\#BottomUp/BottomUp/' /mnt/etc/paru.conf
@@ -135,17 +135,9 @@ aur(){
     sed -i 's/\#Sudo = doas/Sudo = \/bin\/doas/' /mnt/etc/paru.conf
 
     # Install aur packages
-    cp -v aur_packages.txt /mnt/home/work/
-    arch-chroot /mnt chown work:work /home/work/aur_packages.txt
-    arch-chroot -u work /mnt paru --noconfirm --needed -S - < aur_packages.txt
-}
-
-x11_keymap(){
-    # Change keyboard to br
-    arch-chroot -u work /mnt sh -c '
-    cd /home/work;
-    localectl set-x11-keymap br;
-    '
+    cp -v aur_packages.txt /mnt
+    echo "paru --noconfirm --needed -S - < aur_packages.txt" | $CHROOT su work
+    rm /mnt/aur_packages.txt
 }
 
 is_uefi
@@ -172,21 +164,22 @@ echo 'permit keepenv persist :wheel' >> /mnt/etc/doas.conf
 # Blacklists nouveau in case nvidia-utils doesn't
 echo 'blacklist nouveau' >> /mnt/etc/modprobe.d/blacklist.conf
 # Change shell to fish
-arch-chroot /mnt chsh -s /bin/fish
+$CHROOT chsh -s /bin/fish
 grub
 systems
 create_user
 # Root password
 echo root:1234 >> passwords.txt
-# Copy passwords to new system
-cp -v passwords.txt /mnt
 # User Passowrds
-arch-chroot /mnt chpasswd < passwords.txt
+cp -v passwords.txt /mnt
+$CHROOT chpasswd < passwords.txt
+rm /mnt/passwords.txt
 # Ensure blacklist works
-arch-chroot /mnt mkinitcpio -P
+$CHROOT mkinitcpio -P
 # Set stable rust
-arch-chroot /mnt /usr/bin/runuser -u work -- rustup default stable
+$CHROOT echo "rustup default stable" | $CHROOT su work
 aur
-x11_keymap
+# Change keyboard to br
+echo "localectl set-x11-keymap br" | $CHROOT su work
 # Save any logs in home
 cp -v *.log /mnt/home/work/
