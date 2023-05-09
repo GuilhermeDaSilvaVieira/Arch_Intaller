@@ -177,7 +177,7 @@ rm /mnt/passwords.txt
 # Ensure blacklist works
 $CHROOT mkinitcpio -P
 # Set stable rust
-$CHROOT echo "rustup default stable" | $CHROOT su work
+echo "rustup default stable" | $CHROOT su work
 aur
 # Change keyboard to br
 echo "localectl set-x11-keymap br" | $CHROOT su work
