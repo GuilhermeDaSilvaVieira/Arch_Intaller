@@ -8,6 +8,12 @@ BLUE='\033[1;36m'
 RED='\033[0;31m'
 NO_COLOR='\033[0m'
 
+# Cleanup from previous runs.
+cleanup(){
+    swapoff /dev/sda2
+    umount -R /mnt
+}
+
 is_uefi() {
     DIRECTORY_UEFI="/sys/firmware/efi/efivars/"
     if [ -d $DIRECTORY_UEFI ]; then
@@ -143,6 +149,7 @@ x11_keymap(){
 }
 
 is_uefi
+cleanup
 partition
 format
 mount_disk
