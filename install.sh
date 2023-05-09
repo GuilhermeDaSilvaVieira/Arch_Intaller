@@ -119,7 +119,6 @@ aur(){
     # Install Paru
     arch-chroot -u work /mnt sh -c '
     cd /home/work;
-    rustup default stable;
     git clone https://aur.archlinux.org/paru-bin.git;
     cd paru-bin;
     makepkg -si;
@@ -185,7 +184,9 @@ cp -v passwords.txt /mnt
 arch-chroot /mnt chpasswd < passwords.txt
 # Ensure blacklist works
 arch-chroot /mnt mkinitcpio -P
-# Save any logs in home
-cp -v *.log /mnt/home/work/
+# Set stable rust
+arch-chroot /mnt /usr/bin/runuser -u work -- rustup default stable
 aur
 x11_keymap
+# Save any logs in home
+cp -v *.log /mnt/home/work/
