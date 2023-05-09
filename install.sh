@@ -112,18 +112,16 @@ create_user(){
     do
         $CHROOT useradd -m -G wheel,audio,video,optical,storage,libvirt -s /bin/fish $user
         echo $user:1234 >> passwords.txt
-        mkdir /mnt/home/$user/.cache/ /mnt/home/$user/.config/
-        $CHROOT chown $user:$user /home/$user/.cache/ /home/$user/.config/
     done
 }
 
 aur(){
     # Install Paru
-    echo "cd &&
+    echo "cd ~/ &&
         git clone https://aur.archlinux.org/paru-bin.git &&
         cd paru-bin &&
         makepkg -si --noconfirm &&
-        cd &&
+        cd ~/ &&
     rm -rf paru-bin" | $CHROOT su work
 
     # Paru config
