@@ -137,6 +137,7 @@ aur(){
 
     # Install aur packages
     cp -v aur_packages.txt /mnt/home/work/
+    arch-chroot /mnt chown work:work /home/work/aur_packages.txt
     arch-chroot -u work /mnt paru --noconfirm --needed -S - < aur_packages.txt
 }
 
