@@ -181,5 +181,5 @@ $CHROOT echo "rustup default stable" | $CHROOT su work
 aur
 # Change keyboard to br
 echo "localectl set-x11-keymap br" | $CHROOT su work
-# Save any logs in home
-cp -v *.log /mnt/home/work/
+# Save any logs
+cp -v *.log /mnt
