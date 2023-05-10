@@ -116,15 +116,14 @@ create_user(){
 }
 
 aur(){
-    #BUG: Password: su: Authentication token manipulation error
-    #FIX: Probably sudo can run, not with doas, find a way to bypass it
-    # Install Paru
-    echo "cd ~/ &&
-        git clone https://aur.archlinux.org/paru-bin.git &&
-        cd paru-bin &&
-        makepkg -sri --noconfirm &&
-        cd ~/ &&
-    rm -rf paru-bin" | $CHROOT su work
+    arch-chroot -u work /mnt sh -c "
+    cd /home/work;
+    git clone https://aur.archlinux.org/paru-bin.git;
+    cd paru-bin;
+    makepkg -sri --noconfirm;
+    cd /home/work;
+    rm -rf paru-bin;
+    "
 
     # Paru config
     sed -i 's/\#BottomUp/BottomUp/' /mnt/etc/paru.conf
