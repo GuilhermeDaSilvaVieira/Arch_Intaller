@@ -139,6 +139,27 @@ aur(){
     rm /mnt/aur_packages.txt
 }
 
+# Make startx works with awesome
+setup_startx(){
+    for user in work fun;
+    do
+        echo " cp /etc/X11/xinit/xinitrc ~/.xinitrc &&
+        head -n -5 ~/.xinitrc > ~/temp &&
+        echo 'exec awesome' >> ~/temp &&
+        mv ~/temp ~/.xinitrc" | $CHROOT su $user
+    done
+}
+
+setup_default_apps(){
+    for user in work fun;
+    do
+        echo "xdg-mime default org.pwmt.zathura.desktop application/pdf &&
+            xdg-mime default librewolf.desktop x-scheme-handler/https &&
+        xdg-mime default librewolf.desktop x-scheme-handler/http" | $CHROOT su $user
+    done
+}
+
+
 is_uefi
 cleanup
 partition
@@ -180,5 +201,7 @@ echo "rustup default stable" | $CHROOT su work
 aur
 # Change keyboard to br
 echo "localectl set-x11-keymap br" | $CHROOT su work
+setup_startx
+setup_default_apps
 # Save any logs
 cp -v *.log /mnt
