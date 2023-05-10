@@ -4,7 +4,6 @@
 # TODO: Minimal input installer
 
 GREEN='\033[0;32m'
-BLUE='\033[1;36m'
 RED='\033[0;31m'
 NO_COLOR='\033[0m'
 
