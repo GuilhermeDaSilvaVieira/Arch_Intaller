@@ -214,3 +214,4 @@ setup_default_apps
 dotfiles
 # Save any logs
 cp -v *.log /mnt
+reboot
