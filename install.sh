@@ -143,7 +143,7 @@ aur(){
 setup_startx(){
     for user in work fun;
     do
-        echo " cp /etc/X11/xinit/xinitrc ~/.xinitrc &&
+        echo "cp /etc/X11/xinit/xinitrc ~/.xinitrc &&
         head -n -5 ~/.xinitrc > ~/temp &&
         echo 'exec awesome' >> ~/temp &&
         mv ~/temp ~/.xinitrc" | $CHROOT su $user
@@ -159,6 +159,14 @@ setup_default_apps(){
     done
 }
 
+dotfiles(){
+    for user in root work fun;
+    do
+        echo "cd ~/ &&
+        git clone https://github.com/guilhermedasilvavieira/.dotfiles &&
+        .dotfiles/install.sh" | $CHROOT su $user
+    done
+}
 
 is_uefi
 cleanup
@@ -203,5 +211,6 @@ aur
 echo "localectl set-x11-keymap br" | $CHROOT su work
 setup_startx
 setup_default_apps
+dotfiles
 # Save any logs
 cp -v *.log /mnt
