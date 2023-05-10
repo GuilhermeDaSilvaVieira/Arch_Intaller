@@ -60,7 +60,7 @@ mount_disk(){
 
 time_and_locale(){
     # Links to your timezone
-    ln -sf /mnt/usr/share/zoneinfo/America/Sao_Paulo /mnt/etc/localtime
+    $CHROOT ln -sf /usr/share/zoneinfo/America/Sao_Paulo /etc/localtime
 
     # generate /etc/adjtime
     $CHROOT hwclock --systohc
