@@ -7,6 +7,7 @@ RED='\033[0;31m'
 NO_COLOR='\033[0m'
 
 CHROOT="arch-chroot /mnt"
+ENABLED_SYSTEMD="NetworkManager libvirtd cups bluetooth"
 
 # Cleanup from previous runs.
 cleanup(){
@@ -100,9 +101,9 @@ grub(){
 
 systems(){
     # Enable internet, VM, Printing, Bluetooth
-    for system in NetworkManager libvirtd cups bluetooth;
+    for system in $ENABLED_SYSTEMD
     do
-        $CHROOT systemctl enable $system
+        $CHROOT systemctl enable "$system"
     done
 }
 
