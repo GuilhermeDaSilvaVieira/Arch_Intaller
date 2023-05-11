@@ -134,7 +134,7 @@ aur(){
 
     # Install aur packages
     cp -v aur_packages.txt /mnt
-    echo "paru -S - < aur_packages.txt" | $CHROOT su work
+    echo "paru --noconfirm --needed -S - < aur_packages.txt" | $CHROOT su work
     rm /mnt/aur_packages.txt
 }
 

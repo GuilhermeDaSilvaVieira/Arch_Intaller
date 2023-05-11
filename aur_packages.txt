@@ -1,6 +1,5 @@
 awesome-git
 librewolf-bin
-ttf-ms-fonts
 tradingview
 fastfetch
 jmtpfs
