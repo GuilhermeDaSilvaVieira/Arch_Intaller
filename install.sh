@@ -1,6 +1,5 @@
 #! /bin/bash
 
-# TODO: No input installer
 # TODO: Minimal input installer
 
 GREEN='\033[0;32m'
