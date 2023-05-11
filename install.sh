@@ -207,7 +207,7 @@ $CHROOT mkinitcpio -P
 echo "rustup default stable" | $CHROOT su work
 aur
 # Change keyboard to br
-echo "localectl set-x11-keymap br" | $CHROOT su work
+$CHROOT localectl set-x11-keymap br
 setup_startx
 setup_default_apps
 dotfiles
