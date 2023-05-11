@@ -76,6 +76,7 @@ packages(){
     sed -i 's/#Color/Color/' /mnt/etc/pacman.conf
     sed -i 's/#ParallelDownloads/ParallelDownloads/' /mnt/etc/pacman.conf
     sed -i "/\[multilib\]/,/Include/"'s/^#//' /mnt/etc/pacman.conf
+    sed -i '/^ParallelDownloads =/a ILoveCandy' /mnt/etc/pacman.conf
 
     # Install all needed packages
     $CHROOT pacman -Sy --noconfirm --needed - < packages.txt
