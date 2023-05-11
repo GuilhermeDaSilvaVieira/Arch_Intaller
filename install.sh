@@ -207,7 +207,13 @@ $CHROOT mkinitcpio -P
 $CHROOT rustup default stable
 aur
 # Change keyboard to br
-$CHROOT localectl set-x11-keymap br
+cat >> /mnt/etc/X11/xorg.conf.d/00-keyboard.conf <<EOL
+Section "InputClass"
+        Identifier "system-keyboard"
+        MatchIsKeyboard "on"
+        Option "XkbLayout" "br"
+EndSection
+EOL
 setup_startx
 setup_default_apps
 dotfiles
