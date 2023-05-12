@@ -44,7 +44,6 @@ fd
 unzip
 ttf-lato
 ttf-liberation
-ueberzug
 renameutils
 ffmpegthumbnailer
 alsa-utils
