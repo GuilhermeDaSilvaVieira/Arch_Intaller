@@ -7,6 +7,7 @@ RED='\033[0;31m'
 NO_COLOR='\033[0m'
 
 CHROOT="arch-chroot /mnt"
+USERS=("work" "fun")
 
 # Cleanup from previous runs.
 cleanup(){
@@ -107,20 +108,20 @@ systems(){
 }
 
 create_user(){
-    for user in work fun;
+    for user in "${USERS[@]}";
     do
-        $CHROOT useradd -m -G wheel,audio,video,optical,storage,libvirt -s /bin/fish $user
-        echo $user:1234 >> passwords.txt
+        $CHROOT useradd -m -G wheel,audio,video,optical,storage,libvirt -s /bin/fish "$user"
+        echo "$user":1234 >> passwords.txt
     done
 }
 
 aur(){
-    arch-chroot -u work /mnt sh -c "
-    cd /home/work;
+    arch-chroot -u "${USERS[0]}" /mnt sh -c "
+    cd /home/${USERS[0]};
     git clone https://aur.archlinux.org/paru-bin.git;
     cd paru-bin;
     makepkg -sri --noconfirm;
-    cd /home/work;
+    cd /home/${USERS[0]};
     rm -rf paru-bin;
     "
 
@@ -134,36 +135,36 @@ aur(){
 
     # Install aur packages
     cp -v aur_packages.txt /mnt
-    echo "paru --noconfirm --needed -S - < aur_packages.txt" | $CHROOT su work
+    echo "paru --noconfirm --needed -S - < aur_packages.txt" | $CHROOT su "${USERS[0]}"
     rm /mnt/aur_packages.txt
 }
 
 # Make startx works with awesome
 setup_startx(){
-    for user in work fun;
+    for user in "${USERS[@]}";
     do
         echo "cp /etc/X11/xinit/xinitrc ~/.xinitrc &&
         head -n -5 ~/.xinitrc > ~/temp &&
         echo 'exec awesome' >> ~/temp &&
-        mv ~/temp ~/.xinitrc" | $CHROOT su $user
+        mv ~/temp ~/.xinitrc" | $CHROOT su "$user"
     done
 }
 
 setup_default_apps(){
-    for user in work fun;
+    for user in "${USERS[@]}";
     do
         echo "xdg-mime default org.pwmt.zathura.desktop application/pdf &&
             xdg-mime default librewolf.desktop x-scheme-handler/https &&
-        xdg-mime default librewolf.desktop x-scheme-handler/http" | $CHROOT su $user
+        xdg-mime default librewolf.desktop x-scheme-handler/http" | $CHROOT su "$user"
     done
 }
 
 dotfiles(){
-    for user in root work fun;
+    for user in root "${USERS[@]}";
     do
         echo "cd ~/ &&
         git clone https://github.com/guilhermedasilvavieira/.dotfiles &&
-        .dotfiles/install.sh" | $CHROOT su $user
+        .dotfiles/install.sh" | $CHROOT su "$user"
     done
 }
 
@@ -218,5 +219,5 @@ setup_startx
 setup_default_apps
 dotfiles
 # Save any logs
-cp -v *.log /mnt
+cp -v "*.log" /mnt
 reboot
