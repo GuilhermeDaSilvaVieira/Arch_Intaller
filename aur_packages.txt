@@ -9,4 +9,4 @@ xpadneo-dkms-git
 cava
 mangohud
 ani-cli-git
-nerd-fonts-git
+nerd-fonts-meta
