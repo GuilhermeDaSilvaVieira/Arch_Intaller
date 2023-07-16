@@ -91,3 +91,4 @@ noto-fonts-emoji
 ttf-jetbrains-mono
 amd-ucode
 thunderbird
+thunderbird-dark-reader
