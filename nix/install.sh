@@ -20,6 +20,8 @@ mount /dev/disk/by-label/boot /mnt/boot # (for UEFI systems only)
 mkdir -p /mnt/home
 mount /dev/nvme0n1p1 /mnt/home
 nixos-generate-config --root /mnt
-vim /mnt/etc/nixos/configuration.nix
+rm /etc/nixos/configuration.nix
+cp ./configuration.nix /etc/nixos/configuration.nix
+# vim /mnt/etc/nixos/configuration.nix
 nixos-install
 reboot
