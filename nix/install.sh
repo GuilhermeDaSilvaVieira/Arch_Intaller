@@ -17,6 +17,8 @@ mkfs.fat -F 32 -n boot /dev/sda3        # (for UEFI systems only)
 mount /dev/disk/by-label/nixos /mnt
 mkdir -p /mnt/boot                      # (for UEFI systems only)
 mount /dev/disk/by-label/boot /mnt/boot # (for UEFI systems only)
+mkdir -p /mnt/home
+mount /dev/nvme0n1p1 /mnt/home
 nixos-generate-config --root /mnt
 vim /mnt/etc/nixos/configuration.nix
 nixos-install
