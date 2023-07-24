@@ -21,7 +21,7 @@ mkdir -p /mnt/home
 mount /dev/nvme0n1p1 /mnt/home
 nixos-generate-config --root /mnt
 rm /etc/nixos/configuration.nix
-cp ./configuration.nix /etc/nixos/configuration.nix
+cp ./configuration.nix /etc/nixos/
 # vim /mnt/etc/nixos/configuration.nix
 nixos-install
 reboot
