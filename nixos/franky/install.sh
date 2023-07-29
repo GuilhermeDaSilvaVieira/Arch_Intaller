@@ -13,6 +13,9 @@ mkfs.fat -F 32 -n boot /dev/vda3
 mkdir -p /mnt/boot
 mount /dev/disk/by-label/boot /mnt/boot
 
+lsblk -f
+read
+
 git clone https://github.com/guilhermedasilvavieira/.setup
 
 nixos-install --flake .setup#franky

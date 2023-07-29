@@ -16,6 +16,9 @@ mount /dev/disk/by-label/boot /mnt/boot
 mkdir -p /mnt/home
 mount /dev/disk/by-label/home /mnt/home
 
+lsblk -f
+read
+
 git clone https://github.com/guilhermedasilvavieira/.setup
 
 nixos-install --flake .setup#zoro
