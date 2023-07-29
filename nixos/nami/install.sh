@@ -1,3 +1,5 @@
+#! /usr/bin/env bash
+
 # (for BIOS systems only)
 parted /dev/sda -- mklabel msdos
 parted /dev/sda -- mkpart primary 1MB -4GB

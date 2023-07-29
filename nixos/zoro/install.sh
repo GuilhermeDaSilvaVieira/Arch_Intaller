@@ -1,3 +1,5 @@
+#! /usr/bin/env bash
+
 # (for UEFI systems only)
 parted /dev/sda -- mklabel gpt
 parted /dev/sda -- mkpart primary 512MB -16GB
