@@ -10,6 +10,6 @@ mount /dev/disk/by-label/nixos /mnt
 
 git clone https://github.com/guilhermedasilvavieira/.setup
 
-nixos-install --flake .#nami
+nixos-install --flake .setup#nami
 
 reboot
