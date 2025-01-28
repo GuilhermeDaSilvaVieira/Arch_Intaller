@@ -14,15 +14,16 @@ mount /dev/disk/by-label/nixos /mnt
 mkfs.fat -F 32 -n boot /dev/sda3
 mkdir -p /mnt/boot
 mount /dev/disk/by-label/boot /mnt/boot
-# mkfs.ext4 -L home /dev/nvme0n1p1
+mkfs.ext4 -L home /dev/nvme0n1p1
 mkdir -p /mnt/home
 mount /dev/disk/by-label/home /mnt/home
 
 lsblk -f
-read
 
-git clone https://github.com/guilhermedasilvavieira/.setup
+git clone https://github.com/guilhermedasilvavieira/nixos_config
 
-nixos-install --flake .setup#zoro
+cd nixos_config || exit
+
+nixos-install --flake .setup#mugiwara
 
 reboot
